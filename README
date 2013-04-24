@@ -1,0 +1,32 @@
+Installation Guide using the fat jar
+
+1. Install DB2 Express C 9.5
+
+2. Create a database using DB2 control center:
+You only need to provide a database name and ignore all the tuning parameters. 
+
+3. Create a buffer pool of 8k page size using control center
+
+4. Create a tablespace in Control Center
+- select the type to be "Large";
+- set the buffer pool to the one created in step 3;
+- use default setting for the other options;
+- add the privilege of the tablespace just created to the user going to use AD.
+
+5. Fill in the property file, a sample of which is located at /src/test/resources/test.properties 
+- You need to change the database name in connection url to the name you typed in in step 2.
+- Copy the property file to the root directory of the java classes
+
+6. Run the tool with the parameters:
+usage: java -jar ad-install.jar -l <connection.url> -u <user> -p <pwd> -s <schema> [-f /test.properties]
+example: java -jar ad-install.jar -l jdbc:db2://PCCS748C:50000/AVT -u adUserName -p userPassword -s AD
+
+7 Appendix:
+Command line usage: java -jar ad-install.jar
+[(-f|--file) <property.file>] [(-l|--url) <connection.url>] 
+[(-u|--user) <connection.username>] [(-p|--pwd) <connection.pwd>] 
+[(-s|--schema) <target.schemaname>] [(-n|--newuser) <target.username>] [--ct] [-h|--help]
+NOTE: explicitly given parameters will take priority over options given in the properties file.
+NOTE: by default, tablespace (and corresponding buffer pool) is not created. To enforce that, you
+      have to specify the switch --ct. You need an administrative account on local OPERATING SYSTEM 
+      to do that.

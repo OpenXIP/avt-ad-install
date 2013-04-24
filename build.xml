@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<project name="ad-install" default="all" basedir=".">
+	<description>
+      AD Install...
+   </description>
+	<property name="src" location="src/main/java"/>
+	<property name="resources" location="src/main/resources"/>
+	<property name="build" location="build"/>
+	<property name="build.lib" location="${build}/lib"/>
+	<property name="build.classes" location="${build}/classes"/>
+	<property name="lib" location="lib"/>
+	<property name="main-class" value="com.siemens.scr.avt.ad.install.ADInstallationTool"/>
+	<path id="classpath">
+		<fileset dir="${lib}" includes="*.jar"/>
+	</path>
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+	<target name="init">
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}"/>
+		<mkdir dir="${build.lib}"/>
+		<mkdir dir="${build.classes}"/>
+	</target>
+	<target name="compile" depends="init">
+		<javac srcdir="${src}" destdir="${build.classes}" debug="on" classpathref="classpath"/>
+	</target>
+	<target name="jar" depends="compile">
+		<copy todir="${build}/classes">
+        	<fileset dir="${resources}" />
+      	</copy>
+		<manifestclasspath jarfile="${build.lib}/XIPHost.jar" property="manifest.class.path">
+			<classpath refid="classpath"/>
+		</manifestclasspath>
+		<jar jarfile="${build.lib}/ad-install.jar" basedir="${build.classes}">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}"/>
+				<attribute name="Class-Path" value="${manifest.class.path}"/>
+			</manifest>
+		</jar>
+	</target>
+	<target name="all" depends="clean,jar"/>
+</project>
